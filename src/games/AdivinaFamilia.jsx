@@ -2,16 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { FAMILIARES } from '../data/constants';
 
 export default function JuegoFamiliaAdivina({ onSuccess, playSound }) {
-  const [objetivo, setObjetivo] = useState(FAMILIARES[0]);
+  const [objetivo, setObjetivo] = useState(() => FAMILIARES[0]);
 
-  // Función para hacer que el navegador hable
+  // Función para que la app hable en voz alta
   const hablarTexto = (texto) => {
     if ('speechSynthesis' in window) {
-      // Cancelar cualquier locución anterior para que no se encimen
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(texto);
-      utterance.lang = 'es-AR'; // Español latino/argentino
-      utterance.rate = 0.9; // Un poco más pausado para que se entienda bien
+      utterance.lang = 'es-AR';
+      utterance.rate = 0.9;
       window.speechSynthesis.speak(utterance);
     }
   };
@@ -19,7 +18,6 @@ export default function JuegoFamiliaAdivina({ onSuccess, playSound }) {
   const nuevoTurno = () => {
     const azar = FAMILIARES[Math.floor(Math.random() * FAMILIARES.length)];
     setObjetivo(azar);
-    // Hablar la pregunta en voz alta después de un pequeño respiro
     setTimeout(() => {
       hablarTexto(`¿Dónde está ${azar.nombre}?`);
     }, 300);
@@ -31,7 +29,6 @@ export default function JuegoFamiliaAdivina({ onSuccess, playSound }) {
 
   const handleSeleccion = (familiar) => {
     if (familiar.id === objetivo.id) {
-      // Decirle que acertó y el nombre
       hablarTexto(`¡Muy bien! ¡Es ${familiar.nombre}!`);
       onSuccess();
       setTimeout(() => {
