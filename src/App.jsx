@@ -18,6 +18,7 @@ import JuegoHormigasTiaAna from './games/HormigasTiaAna';
 import JuegoCoheteFrancisco from './games/CoheteFrancisco';
 import JuegoBurbujasYeya from './games/BurbujasYeya';
 import JuegoAnimales from './games/Animales';
+import JuegoBotonSorpresa from './games/BotonSorpresa';
 
 export default function App() {
   const [juegoActual, setJuegoActual] = useState('menu');
@@ -93,6 +94,7 @@ export default function App() {
               <h3 className="text-xl sm:text-2xl font-black text-purple-950 drop-shadow-xs">Juegos Divertidos</h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              <BotonMenu titulo="Botón Sorpresa" subtitulo="¡Toca y escucha!" emoji="🎁✨" gradient="from-amber-400 to-pink-500" onClick={() => { setJuegoActual('boton-sorpresa'); playSoundEffect('pop'); }} />
               <BotonMenu titulo="Sonidos de Animales" subtitulo="Audios reales" emoji="🐶🐱" gradient="from-emerald-500 to-teal-600" onClick={() => { setJuegoActual('animales'); playSoundEffect('pop'); }} />
               <BotonMenu titulo="Burbujas de la Yeya" subtitulo="¡Revienta las burbujas!" emoji="🫧✨" gradient="from-fuchsia-500 to-purple-600" onClick={() => { setJuegoActual('burbujas-yeya'); playSoundEffect('pop'); }} />
               <BotonMenu titulo="Hormigas de la Tía Ana" subtitulo="¡Atrapa las hormigas!" emoji="🐜🍪" gradient="from-amber-500 to-orange-600" onClick={() => { setJuegoActual('hormigas-tia-ana'); playSoundEffect('pop'); }} />
@@ -110,6 +112,7 @@ export default function App() {
       {juegoActual === 'cohete-francisco' && <JuegoCoheteFrancisco playSound={playSoundEffect} onSuccess={lanzarFiesta} />}
       {juegoActual === 'burbujas-yeya' && <JuegoBurbujasYeya playSound={playSoundEffect} onSuccess={lanzarFiesta} />}
       {juegoActual === 'animales' && <JuegoAnimales playSound={playSoundEffect} onSuccess={lanzarFiesta} />}
+      {juegoActual === 'boton-sorpresa' && <JuegoBotonSorpresa playSound={playSoundEffect} onSuccess={lanzarFiesta} />}
 
       <CelebracionModal celebrando={celebrando} />
     </div>
