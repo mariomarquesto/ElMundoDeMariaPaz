@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
-import { Volume2, Heart, Home, Sparkles, BookOpen } from 'lucide-react';
+import { Volume2, Heart, Home, Sparkles, BookOpen, Eraser } from 'lucide-react';
 
 const FAMILIA_FOTOS = {
   mama: '/fotos/mama.jpg',
@@ -52,9 +52,8 @@ export default function App() {
       const ctx = getAudioContext();
 
       if (type === 'animal' && audioUrl) {
-        // Reproduce el archivo MP3 real guardado localmente
         const audio = new Audio(audioUrl);
-        audio.play().catch((e) => console.log('Error al reproducir audio real:', e));
+        audio.play().catch((e) => console.log('Error reproduciendo audio:', e));
       } else if (type === 'pop' && ctx) {
         const now = ctx.currentTime;
         const osc = ctx.createOscillator();
@@ -85,7 +84,7 @@ export default function App() {
         });
       }
     } catch (e) {
-      console.log('Error de reproducción:', e);
+      console.log('Error de sonido:', e);
     }
   };
 
@@ -130,6 +129,24 @@ export default function App() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             <BotonMenu 
+              titulo="Descubre a la Familia" 
+              emoji="🎨🖼️" 
+              color="bg-purple-500"
+              onClick={() => { setJuegoActual('descubre-familia'); playSoundEffect('pop'); }}
+            />
+            <BotonMenu 
+              titulo="Corazones para Mamá" 
+              emoji="💖👩" 
+              color="bg-rose-500"
+              onClick={() => { setJuegoActual('corazones-mama'); playSoundEffect('pop'); }}
+            />
+            <BotonMenu 
+              titulo="Corazones para Papá Mario" 
+              emoji="💖👨" 
+              color="bg-red-400"
+              onClick={() => { setJuegoActual('corazones-papa'); playSoundEffect('pop'); }}
+            />
+            <BotonMenu 
               titulo="Cuentos con Francisco" 
               emoji="📖🚀" 
               color="bg-indigo-500"
@@ -165,23 +182,19 @@ export default function App() {
               color="bg-emerald-400"
               onClick={() => { setJuegoActual('animales'); playSoundEffect('pop'); }}
             />
-            <BotonMenu 
-              titulo="Corazones para Papá Mario" 
-              emoji="💖" 
-              color="bg-red-400"
-              onClick={() => { setJuegoActual('corazones-papa'); playSoundEffect('pop'); }}
-            />
           </div>
         </div>
       )}
 
+      {juegoActual === 'descubre-familia' && <JuegoDescubreFamilia playSound={playSoundEffect} onSuccess={lanzarFiesta} />}
+      {juegoActual === 'corazones-mama' && <JuegoCorazonesMama playSound={playSoundEffect} onSuccess={lanzarFiesta} />}
+      {juegoActual === 'corazones-papa' && <JuegoCorazonesPapa playSound={playSoundEffect} onSuccess={lanzarFiesta} />}
       {juegoActual === 'cuentos-francisco' && <JuegoCuentosFrancisco playSound={playSoundEffect} onSuccess={lanzarFiesta} />}
       {juegoActual === 'familia-adivina' && <JuegoFamiliaAdivina onSuccess={lanzarFiesta} playSound={playSoundEffect} />}
       {juegoActual === 'hormigas-tia-ana' && <JuegoHormigasTiaAna playSound={playSoundEffect} onSuccess={lanzarFiesta} />}
       {juegoActual === 'cohete-francisco' && <JuegoCoheteFrancisco playSound={playSoundEffect} onSuccess={lanzarFiesta} />}
       {juegoActual === 'burbujas-yeya' && <JuegoBurbujasYeya playSound={playSoundEffect} onSuccess={lanzarFiesta} />}
       {juegoActual === 'animales' && <JuegoAnimales playSound={playSoundEffect} onSuccess={lanzarFiesta} />}
-      {juegoActual === 'corazones-papa' && <JuegoCorazonesPapa playSound={playSoundEffect} onSuccess={lanzarFiesta} />}
 
       {celebrando && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 pointer-events-none">
@@ -208,6 +221,210 @@ function BotonMenu({ titulo, emoji, color, onClick }) {
   );
 }
 
+// NUEVO: Juego Borrador Mágico / Raspadita de la Familia
+function JuegoDescubreFamilia({ playSound, onSuccess }) {
+  const [familiarActual, setFamiliarActual] = useState(FAMILIARES[0]);
+  const [desvelado, setDesvelado] = useState(false);
+  const canvasRef = useRef(null);
+  const isDrawing = useRef(false);
+
+  const iniciarLienzo = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    // Ancho y alto fijos para la pantalla de raspar
+    canvas.width = 300;
+    canvas.height = 300;
+
+    // Pintar la capa superior de color pastel brillante
+    ctx.fillStyle = '#ec4899'; // Rosa brillante
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Texto de pista
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 22px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('✨ ¡Borra la pintura! ✨', 150, 150);
+
+    setDesvelado(false);
+  };
+
+  useEffect(() => {
+    iniciarLienzo();
+  }, [familiarActual]);
+
+  const cambiarFamiliar = () => {
+    const azar = FAMILIARES[Math.floor(Math.random() * FAMILIARES.length)];
+    setFamiliarActual(azar);
+  };
+
+  const borrarLienzo = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas || desvelado) return;
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.getBoundingClientRect();
+
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+
+    // Usar 'destination-out' para que el trazo borre la pintura rosa
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.arc(x, y, 35, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Reproducir un sonido de pop liviano mientras borra
+    playSound('pop');
+
+    // Calcular cuánto porcentaje se ha borrado
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let transparentPixels = 0;
+    for (let i = 3; i < imgData.data.length; i += 4) {
+      if (imgData.data[i] === 0) transparentPixels++;
+    }
+
+    const porcentajeBorrado = transparentPixels / (canvas.width * canvas.height);
+
+    // Si borró más del 50%, completar automáticamente y celebrar
+    if (porcentajeBorrado > 0.45 && !desvelado) {
+      setDesvelado(true);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      onSuccess();
+    }
+  };
+
+  return (
+    <div className="p-6 text-center max-w-xl mx-auto flex flex-col items-center select-none">
+      <h2 className="text-2xl font-black text-purple-800 mb-2 flex items-center gap-2">
+        <Eraser className="w-8 h-8 text-pink-600" /> Borrador Mágico
+      </h2>
+      <p className="text-lg font-bold text-slate-700 mb-4">
+        ¡Pasa tu dedito por la pantalla para descubrir quién está escondido! 🎨
+      </p>
+
+      {/* Contenedor de la Foto y el Canvas raspable encima */}
+      <div className="relative w-[300px] h-[300px] rounded-3xl overflow-hidden border-8 border-white shadow-2xl bg-purple-100 mb-6">
+        <img 
+          src={familiarActual.foto} 
+          alt={familiarActual.nombre} 
+          className="w-full h-full object-cover"
+          onError={(e) => { e.target.style.display = 'none'; }}
+        />
+        <canvas 
+          ref={canvasRef}
+          onMouseDown={() => { isDrawing.current = true; }}
+          onMouseUp={() => { isDrawing.current = false; }}
+          onMouseMove={(e) => { if (isDrawing.current) borrarLienzo(e); }}
+          onTouchMove={borrarLienzo}
+          className="absolute inset-0 cursor-pointer touch-none"
+        />
+      </div>
+
+      {desvelado && (
+        <div className="bg-white px-6 py-3 rounded-full shadow-lg mb-4 border-4 border-pink-300 animate-bounce">
+          <span className="text-2xl font-black text-purple-700">
+            ¡Es {familiarActual.nombre}! 🎉
+          </span>
+        </div>
+      )}
+
+      <button
+        onClick={cambiarFamiliar}
+        className="bg-purple-600 text-white text-xl font-black px-6 py-3 rounded-full shadow-xl hover:scale-105 active:scale-95 transition flex items-center gap-2"
+      >
+        <Sparkles className="w-6 h-6" /> ¡Otro Familiar! ➡️
+      </button>
+    </div>
+  );
+}
+
+// NUEVO: Corazones para Mamá
+function JuegoCorazonesMama({ playSound, onSuccess }) {
+  const [corazones, setCorazones] = useState(0);
+
+  const darAmor = () => {
+    playSound('pop');
+    const total = corazones + 1;
+    setCorazones(total);
+    if (total % 5 === 0) {
+      onSuccess();
+    }
+  };
+
+  return (
+    <div className="p-6 text-center max-w-xl mx-auto flex flex-col items-center">
+      <h2 className="text-2xl font-black text-rose-600 mb-4">
+        💖 Corazones para Mamá
+      </h2>
+      <div className="w-44 h-44 rounded-full overflow-hidden border-4 border-rose-400 bg-rose-100 shadow-2xl mb-6">
+        <img 
+          src={FAMILIA_FOTOS.mama} 
+          alt="Mamá" 
+          className="w-full h-full object-cover"
+          onError={(e) => { e.target.style.display = 'none'; }}
+        />
+      </div>
+
+      <button
+        onClick={darAmor}
+        className="bg-rose-500 text-white text-3xl font-black px-8 py-4 rounded-full shadow-2xl hover:scale-110 active:scale-90 transition flex items-center gap-3"
+      >
+        <Heart className="w-10 h-10 fill-current text-white animate-bounce" /> ¡Enviar Corazón a Mamá!
+      </button>
+
+      <p className="mt-6 text-xl font-bold text-rose-700">
+        Corazones enviados a Mamá: {corazones} 💖
+      </p>
+    </div>
+  );
+}
+
+// Corazones para Papá Mario
+function JuegoCorazonesPapa({ playSound, onSuccess }) {
+  const [corazones, setCorazones] = useState(0);
+
+  const darAmor = () => {
+    playSound('pop');
+    const total = corazones + 1;
+    setCorazones(total);
+    if (total % 5 === 0) {
+      onSuccess();
+    }
+  };
+
+  return (
+    <div className="p-6 text-center max-w-xl mx-auto flex flex-col items-center">
+      <h2 className="text-2xl font-black text-pink-700 mb-4">
+        💖 Corazones para Papá Mario
+      </h2>
+      <div className="w-44 h-44 rounded-full overflow-hidden border-4 border-blue-400 bg-blue-100 shadow-2xl mb-6">
+        <img 
+          src={FAMILIA_FOTOS.papa} 
+          alt="Papá Mario" 
+          className="w-full h-full object-cover"
+          onError={(e) => { e.target.style.display = 'none'; }}
+        />
+      </div>
+
+      <button
+        onClick={darAmor}
+        className="bg-pink-500 text-white text-3xl font-black px-8 py-4 rounded-full shadow-2xl hover:scale-110 active:scale-90 transition flex items-center gap-3"
+      >
+        <Heart className="w-10 h-10 fill-current text-white animate-bounce" /> ¡Enviar Corazón!
+      </button>
+
+      <p className="mt-6 text-xl font-bold text-purple-700">
+        Corazones enviados a Papá: {corazones} 💖
+      </p>
+    </div>
+  );
+}
+
+// Cuentos de Aventuras con Francisco y María Paz
 function JuegoCuentosFrancisco({ playSound, onSuccess }) {
   const [pagina, setPagina] = useState(0);
 
@@ -281,6 +498,7 @@ function JuegoCuentosFrancisco({ playSound, onSuccess }) {
   );
 }
 
+// ¿Quién es en la Familia?
 function JuegoFamiliaAdivina({ onSuccess, playSound }) {
   const [objetivo, setObjetivo] = useState(FAMILIARES[0]);
 
@@ -336,6 +554,7 @@ function JuegoFamiliaAdivina({ onSuccess, playSound }) {
   );
 }
 
+// Las Hormigas de la Tía Ana
 function JuegoHormigasTiaAna({ playSound, onSuccess }) {
   const [hormigas, setHormigas] = useState([]);
   const [puntos, setPuntos] = useState(0);
@@ -400,6 +619,7 @@ function JuegoHormigasTiaAna({ playSound, onSuccess }) {
   );
 }
 
+// Cohete de Francisco
 function JuegoCoheteFrancisco({ playSound, onSuccess }) {
   const [estrellas, setEstrellas] = useState(0);
 
@@ -445,6 +665,7 @@ function JuegoCoheteFrancisco({ playSound, onSuccess }) {
   );
 }
 
+// Burbujas de la Yeya
 function JuegoBurbujasYeya({ playSound, onSuccess }) {
   const [burbujas, setBurbujas] = useState([1, 2, 3, 4, 5]);
 
@@ -488,7 +709,7 @@ function JuegoBurbujasYeya({ playSound, onSuccess }) {
   );
 }
 
-// 5. Juego de Animales con MP3 Reales
+// Animales
 function JuegoAnimales({ playSound, onSuccess }) {
   const [animalObjetivo, setAnimalObjetivo] = useState(ANIMALES[0]);
 
@@ -533,46 +754,6 @@ function JuegoAnimales({ playSound, onSuccess }) {
           </button>
         ))}
       </div>
-    </div>
-  );
-}
-
-function JuegoCorazonesPapa({ playSound, onSuccess }) {
-  const [corazones, setCorazones] = useState(0);
-
-  const darAmor = () => {
-    playSound('pop');
-    const total = corazones + 1;
-    setCorazones(total);
-    if (total % 5 === 0) {
-      onSuccess();
-    }
-  };
-
-  return (
-    <div className="p-6 text-center max-w-xl mx-auto flex flex-col items-center">
-      <h2 className="text-2xl font-black text-pink-700 mb-4">
-        💖 Corazones para Papá Mario
-      </h2>
-      <div className="w-44 h-44 rounded-full overflow-hidden border-4 border-blue-400 bg-blue-100 shadow-2xl mb-6">
-        <img 
-          src={FAMILIA_FOTOS.papa} 
-          alt="Papá Mario" 
-          className="w-full h-full object-cover"
-          onError={(e) => { e.target.style.display = 'none'; }}
-        />
-      </div>
-
-      <button
-        onClick={darAmor}
-        className="bg-pink-500 text-white text-3xl font-black px-8 py-4 rounded-full shadow-2xl hover:scale-110 active:scale-90 transition flex items-center gap-3"
-      >
-        <Heart className="w-10 h-10 fill-current text-white animate-bounce" /> ¡Enviar Corazón!
-      </button>
-
-      <p className="mt-6 text-xl font-bold text-purple-700">
-        Corazones enviados a Papá: {corazones} 💖
-      </p>
     </div>
   );
 }
