@@ -40,7 +40,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-sky-300 via-purple-200 to-pink-300 text-slate-800 font-sans select-none overflow-x-hidden pb-16">
+    <div className="min-h-screen bg-linear-to-b from-pink-400 via-fuchsia-300 to-purple-400 text-slate-800 font-sans select-none overflow-x-hidden pb-16">
       <Header 
         juegoActual={juegoActual} 
         setJuegoActual={setJuegoActual} 
@@ -50,11 +50,15 @@ export default function App() {
 
       {juegoActual === 'menu' && (
         <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-10">
-          <div className="bg-white/80 backdrop-blur-xs p-6 rounded-3xl shadow-xl text-center border-4 border-purple-300 relative overflow-hidden">
-            <h2 className="text-2xl sm:text-3xl font-black text-purple-900 mb-1">
+          
+          {/* Banner de Bienvenida en Rosa Fucsia Mágico */}
+          <div className="bg-linear-to-r from-pink-500 via-rose-500 to-fuchsia-600 p-6 rounded-3xl shadow-2xl text-center border-4 border-white relative overflow-hidden text-white">
+            <div className="absolute -top-6 -left-6 text-6xl opacity-20">🎨</div>
+            <div className="absolute -bottom-6 -right-6 text-6xl opacity-20">🚀</div>
+            <h2 className="text-2xl sm:text-3xl font-black mb-1 drop-shadow-md">
               ¡Hola María Paz! 👋🎉
             </h2>
-            <p className="text-lg font-bold text-slate-600">
+            <p className="text-lg font-bold text-pink-100 drop-shadow-sm">
               ¿Qué quieres jugar hoy? ¡Toca cualquier tarjeta! 👇
             </p>
           </div>
@@ -62,36 +66,36 @@ export default function App() {
           <section>
             <div className="flex items-center gap-3 mb-4">
               <span className="text-3xl">👨‍👩‍👧</span>
-              <h3 className="text-xl sm:text-2xl font-black text-purple-900">Juegos de la Familia</h3>
+              <h3 className="text-xl sm:text-2xl font-black text-purple-950 drop-shadow-xs">Juegos de la Familia</h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               <BotonMenu titulo="Descubre a la Familia" subtitulo="¡Raspa la pintura!" emoji="🎨🖼️" gradient="from-purple-500 to-indigo-600" onClick={() => { setJuegoActual('descubre-familia'); playSoundEffect('pop'); }} />
-              <BotonMenu titulo="¿Quién es en la Familia?" subtitulo="Encuentra a cada uno" emoji="👨‍👩‍👧" gradient="from-pink-400 to-rose-500" onClick={() => { setJuegoActual('familia-adivina'); playSoundEffect('pop'); }} />
-              <BotonMenu titulo="Corazones para Mamá" subtitulo="¡Mucho amor!" emoji="💖👩" gradient="from-rose-400 to-pink-600" onClick={() => { setJuegoActual('corazones-mama'); playSoundEffect('pop'); }} />
-              <BotonMenu titulo="Corazones para Papá" subtitulo="Abrazos para Papá Mario" emoji="💖👨" gradient="from-red-400 to-rose-600" onClick={() => { setJuegoActual('corazones-papa'); playSoundEffect('pop'); }} />
+              <BotonMenu titulo="¿Quién es en la Familia?" subtitulo="Encuentra a cada uno" emoji="👨‍👩‍👧" gradient="from-pink-500 to-rose-600" onClick={() => { setJuegoActual('familia-adivina'); playSoundEffect('pop'); }} />
+              <BotonMenu titulo="Corazones para Mamá" subtitulo="¡Mucho amor!" emoji="💖👩" gradient="from-rose-500 to-pink-600" onClick={() => { setJuegoActual('corazones-mama'); playSoundEffect('pop'); }} />
+              <BotonMenu titulo="Corazones para Papá" subtitulo="Abrazos para Papá Mario" emoji="💖👨" gradient="from-red-500 to-rose-600" onClick={() => { setJuegoActual('corazones-papa'); playSoundEffect('pop'); }} />
             </div>
           </section>
 
           <section>
             <div className="flex items-center gap-3 mb-4">
               <span className="text-3xl">🚀</span>
-              <h3 className="text-xl sm:text-2xl font-black text-indigo-900">Aventuras con Francisco</h3>
+              <h3 className="text-xl sm:text-2xl font-black text-purple-950 drop-shadow-xs">Aventuras con Francisco</h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <BotonMenu titulo="Cuentos de Aventuras" subtitulo="Historias de hermanos" emoji="📖✨" gradient="from-indigo-500 to-blue-600" onClick={() => { setJuegoActual('cuentos-francisco'); playSoundEffect('pop'); }} />
-              <BotonMenu titulo="El Cohete de Francisco" subtitulo="¡A volar a las estrellas!" emoji="🚀⭐" gradient="from-blue-500 to-cyan-600" onClick={() => { setJuegoActual('cohete-francisco'); playSoundEffect('pop'); }} />
+              <BotonMenu titulo="Cuentos de Aventuras" subtitulo="Historias de hermanos" emoji="📖✨" gradient="from-indigo-500 to-purple-600" onClick={() => { setJuegoActual('cuentos-francisco'); playSoundEffect('pop'); }} />
+              <BotonMenu titulo="El Cohete de Francisco" subtitulo="¡A volar a las estrellas!" emoji="🚀⭐" gradient="from-blue-500 to-indigo-600" onClick={() => { setJuegoActual('cohete-francisco'); playSoundEffect('pop'); }} />
             </div>
           </section>
 
           <section>
             <div className="flex items-center gap-3 mb-4">
               <span className="text-3xl">🐾</span>
-              <h3 className="text-xl sm:text-2xl font-black text-emerald-900">Juegos Divertidos</h3>
+              <h3 className="text-xl sm:text-2xl font-black text-purple-950 drop-shadow-xs">Juegos Divertidos</h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              <BotonMenu titulo="Sonidos de Animales" subtitulo="Audios reales" emoji="🐶🐱" gradient="from-emerald-400 to-teal-600" onClick={() => { setJuegoActual('animales'); playSoundEffect('pop'); }} />
-              <BotonMenu titulo="Burbujas de la Yeya" subtitulo="¡Revienta las burbujas!" emoji="🫧✨" gradient="from-purple-400 to-fuchsia-600" onClick={() => { setJuegoActual('burbujas-yeya'); playSoundEffect('pop'); }} />
-              <BotonMenu titulo="Hormigas de la Tía Ana" subtitulo="¡Atrapa las hormigas!" emoji="🐜🍪" gradient="from-amber-400 to-orange-500" onClick={() => { setJuegoActual('hormigas-tia-ana'); playSoundEffect('pop'); }} />
+              <BotonMenu titulo="Sonidos de Animales" subtitulo="Audios reales" emoji="🐶🐱" gradient="from-emerald-500 to-teal-600" onClick={() => { setJuegoActual('animales'); playSoundEffect('pop'); }} />
+              <BotonMenu titulo="Burbujas de la Yeya" subtitulo="¡Revienta las burbujas!" emoji="🫧✨" gradient="from-fuchsia-500 to-purple-600" onClick={() => { setJuegoActual('burbujas-yeya'); playSoundEffect('pop'); }} />
+              <BotonMenu titulo="Hormigas de la Tía Ana" subtitulo="¡Atrapa las hormigas!" emoji="🐜🍪" gradient="from-amber-500 to-orange-600" onClick={() => { setJuegoActual('hormigas-tia-ana'); playSoundEffect('pop'); }} />
             </div>
           </section>
         </div>
